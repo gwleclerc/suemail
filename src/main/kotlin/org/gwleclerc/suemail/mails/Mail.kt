@@ -1,7 +1,6 @@
 package org.gwleclerc.suemail.mails
 
-import org.gwleclerc.suemail.utils.Constants
-import java.util.*
+import java.util.Date
 
 /**
  * Created by gwleclerc on 22/02/17.

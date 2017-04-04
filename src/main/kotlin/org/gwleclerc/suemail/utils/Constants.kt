@@ -5,10 +5,10 @@ package org.gwleclerc.suemail.utils
  */
 object Constants {
     // Init IMAP connection
-    val IMAP_HOST_KEY="imap.host"
-    val IMAP_PORT_KEY="imap.port"
-    val IMAP_USER_KEY="imap.user"
-    val IMAP_PASSWORD_KEY="imap.password"
+    val IMAP_HOST_KEY = "imap.host"
+    val IMAP_PORT_KEY = "imap.port"
+    val IMAP_USER_KEY = "imap.user"
+    val IMAP_PASSWORD_KEY = "imap.password"
     val STORE_PROTOCOL_KEY = "mail.store.protocol"
     val MAIL_IMAPS_SSL_TRUST = "mail.imaps.ssl.trust"
     val MAIL_IMAPS_SSL_SOCKET_FACTORY = "mail.imaps.ssl.socketFactory"
@@ -17,7 +17,7 @@ object Constants {
     val MAIL_FOLDER_KEY = "mail.folder"
     val MAIL_FILTER_NEW_ISSUE_FROM_ADDRESS_KEY = "mail.filter.new.issue.from.address"
     val MAIL_FILTER_NEW_ISSUE_TO_ADDRESS_KEY = "mail.filter.new.issue.to.address"
-    val MAIL_FILTER_NEW_ISSUE_CC_ADDRESS_KEY  = "mail.filter.new.issue.cc.address"
+    val MAIL_FILTER_NEW_ISSUE_CC_ADDRESS_KEY = "mail.filter.new.issue.cc.address"
     val MAIL_FILTER_NEW_ISSUE_SUBJECT_KEY = "mail.filter.new.issue.subject"
     val MAIL_FILTER_NEW_ISSUE_BODY_KEY = "mail.filter.new.issue.body"
 

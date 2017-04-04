@@ -1,13 +1,18 @@
 package org.gwleclerc.suemail.jira
 
-import com.beust.klaxon.*
+import com.beust.klaxon.int
+import com.beust.klaxon.array
+import com.beust.klaxon.obj
+import com.beust.klaxon.string
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.JsonArray
 import com.github.kittinunf.result.Result
 import com.github.kittinunf.result.flatMap
 import com.github.kittinunf.result.map
 import org.gwleclerc.suemail.mails.Mail
 import org.gwleclerc.suemail.utils.Constants
 import org.gwleclerc.suemail.utils.Utils
-import java.util.*
+import java.util.Properties
 
 /**
  * Created by gwleclerc on 22/02/17.

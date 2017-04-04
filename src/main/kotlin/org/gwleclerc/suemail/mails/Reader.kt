@@ -3,11 +3,15 @@ package org.gwleclerc.suemail.mails
 import com.sun.mail.util.MailSSLSocketFactory
 import org.gwleclerc.suemail.utils.Constants
 import org.gwleclerc.suemail.utils.Messages
-import java.util.*
-import javax.mail.*
+import java.util.Properties
+import java.util.Date
+import javax.mail.Store
+import javax.mail.Session
+import javax.mail.Folder
+import javax.mail.Flags
+import javax.mail.Message
 import javax.mail.Message.RecipientType
 import javax.mail.search.FlagTerm
-
 
 /**
  * Created by gwleclerc on 14/02/17.
@@ -39,7 +43,6 @@ object Reader {
             return store
         }
     }
-
 
     fun fetchMails(props: Properties): List<Mail> {
         val store = initStore(props)

@@ -15,7 +15,7 @@ import com.github.kittinunf.result.map
 object JIRA {
 
     fun find(url: String, jql : String, user: String, password: String): Result<JsonObject, Exception> {
-        val (request, response, result) = "$url/search?$jql".httpGet().authenticate(user, password).responseString()
+        val (_, _, result) = "$url/search?$jql".httpGet().authenticate(user, password).responseString()
         return result.map { data ->
             val parser = Parser()
             val json = parser.parse(StringBuilder(data)) as? JsonObject ?: JsonObject()
@@ -24,7 +24,7 @@ object JIRA {
     }
 
     fun getTransition(url: String, issue: String, user: String, password: String): Result<JsonObject, Exception> {
-        val (request, response, result) = "$url/issue/$issue/transitions".httpGet().authenticate(user, password).responseString()
+        val (_, _, result) = "$url/issue/$issue/transitions".httpGet().authenticate(user, password).responseString()
         return result.map { data ->
             val parser = Parser()
             val json = parser.parse(StringBuilder(data)) as? JsonObject ?: JsonObject()
@@ -32,7 +32,7 @@ object JIRA {
         }
     }
 
-    fun doTransition(url: String, issue: String, transitionID: String,  user: String, password: String) {
+    fun doTransition(url: String, issue: String, transitionID: String, user: String, password: String) {
         val body = JsonObject()
         val transition = JsonObject(mapOf("id" to transitionID))
         body["transition"] = transition
@@ -49,7 +49,7 @@ object JIRA {
         fields["issuetype"] = JsonObject(mapOf("name" to "Support"))
         issue["fields"] = fields
         println(issue.toJsonString(true))
-        val (request, response, result) = "$url/issue/".httpPost()
+        val (_, _, result) = "$url/issue/".httpPost()
                 .body(issue.toJsonString())
                 .header("Content-Type" to "application/json")
                 .authenticate(user, password)
@@ -58,7 +58,7 @@ object JIRA {
     }
 
     fun editIssue(url: String, key: String, issue: JsonObject, user: String, password: String): Result<String, Exception> {
-        val (request, response, result) = "$url/issue/$key".httpPut()
+        val (_, _, result) = "$url/issue/$key".httpPut()
                 .body(issue.toJsonString())
                 .header("Content-Type" to "application/json")
                 .authenticate(user, password)
