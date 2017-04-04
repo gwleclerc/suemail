@@ -13,7 +13,7 @@ import kotlin.system.exitProcess
  */
 
 fun main(args: Array<String>) {
-    if (args.size < 1) {
+    if (args.isEmpty()) {
         println("Usage:")
         println("   java -jar suemail.jar <property-file-path>")
         exitProcess(1)

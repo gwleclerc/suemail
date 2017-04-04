@@ -7,7 +7,7 @@ import java.util.Date
  */
 data class Mail(val from: String, val to: String, val cc: String, val subject: String, val body: String, val sentDate: Date) {
     companion object {
-        fun filterRegex(from: Regex, to: Regex, cc: Regex, subject: Regex, body: Regex ): (Mail) -> Boolean {
+        fun filterRegex(from: Regex, to: Regex, cc: Regex, subject: Regex, body: Regex): (Mail) -> Boolean {
             return fun(mail: Mail): Boolean {
                 return from.containsMatchIn(mail.from)
                         && to.containsMatchIn(mail.to)

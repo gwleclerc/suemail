@@ -17,42 +17,44 @@ import java.util.Properties
 /**
  * Created by gwleclerc on 22/02/17.
  */
-class Sender(val url: String, val user : String, val password : String, val project : String) {
+class Sender(val url: String, val user: String, val password: String, val project: String) {
     fun manageIssues(mails: List<Mail>, props: Properties) {
-        mails.forEach { mail ->
-            val json = JIRA.find(url, Utils.searchMailJQL(project, mail, props), user, password)
-            val result = json.flatMap { value ->
-                val nbResults = value.int("total") ?: 0
-                if (nbResults == 0) {
-                    createIssue(mail, props)
-                } else {
-                    val issues = value.array<JsonObject>("issues") ?: JsonArray()
-                    println("issues: ${issues.size}")
-                    val fixVersion = if (issues.size > 0) issues[0].obj("fields")?.array<JsonObject>("fixVersions") ?: JsonArray() else JsonArray()
-                    println("fixVersion: $fixVersion")
-                    if (fixVersion.size > 0) {
-                        createIssue(mail, props)
-                    } else {
-                        editIssue(mail, props, issues[0].string("key") ?: "" )
-                    }
-                }
-            }
-            when (result) {
-                is Result.Success -> println(result.value)
-                is Result.Failure -> println(result.error)
-            }
-            println()
-        }
+        mails.forEach { manageMail(it, props) }
     }
 
-    private fun createIssue(mail: Mail, props : Properties): Result<String, Exception> {
+    private fun manageMail(mail: Mail, props: Properties) {
+        val json = JIRA.find(url, Utils.searchMailJQL(project, mail, props), user, password)
+        val result = json.flatMap { value ->
+            val nbResults = value.int("total") ?: 0
+            if (nbResults == 0) {
+                createIssue(mail, props)
+            } else {
+                val issues = value.array<JsonObject>("issues") ?: JsonArray()
+                println("issues: ${issues.size}")
+                val fixVersion = if (issues.size > 0) issues[0].obj("fields")?.array<JsonObject>("fixVersions") ?: JsonArray() else JsonArray()
+                println("fixVersion: $fixVersion")
+                if (fixVersion.size > 0) {
+                    createIssue(mail, props)
+                } else {
+                    editIssue(mail, props, issues[0].string("key") ?: "" )
+                }
+            }
+        }
+        when (result) {
+            is Result.Success -> println(result.value)
+            is Result.Failure -> println(result.error)
+        }
+        println()
+    }
+
+    private fun createIssue(mail: Mail, props: Properties): Result<String, Exception> {
         println("creating issue")
         val body = Utils.createIssue(mail, props)
         return JIRA.createIssue(url, project, body, user, password).map { "Issue Created" }
     }
 
-    private fun editIssue(mail: Mail, props : Properties, issue: String): Result<Any, Exception> {
-        println("editing issue")
+    private fun editIssue(mail: Mail, props: Properties, issue: String): Result<Any, Exception> {
+        println("editing issue $issue")
         val body = Utils.createIssue(mail, props, edit = true)
         val result = JIRA.editIssue(url, issue, body, user, password)
         val statusList = props.getProperty(Constants.JIRA_ISSUE_STATUS, "").split(",")
@@ -63,9 +65,13 @@ class Sender(val url: String, val user : String, val password : String, val proj
                     val value = transition.string("id") ?: ""
                     key to value
                 }?.toMap() ?: mapOf()
-                JIRA.doTransition(url, issue, transitions[status]?: "", user, password)
+                val transitionResult = JIRA.doTransition(url, issue, transitions[status]?: "", user, password)
+                when (transitionResult) {
+                    is Result.Success -> println("Issue $issue transitioned")
+                    is Result.Failure -> println("Unable to transition issue $issue, continuing")
+                }
             }
         }
-        return result.map { "Issue Updated" }
+        return result.map { "Issue $issue Updated" }
     }
 }

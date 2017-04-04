@@ -69,23 +69,27 @@ object Reader {
                     sentDate = message.sentDate ?: Date()
             )
         }
-        val fromNewIssue = props.getProperty(Constants.MAIL_FILTER_NEW_ISSUE_FROM_ADDRESS_KEY, ".*").toRegex(RegexOption.IGNORE_CASE)
-        val toNewIssue = props.getProperty(Constants.MAIL_FILTER_NEW_ISSUE_TO_ADDRESS_KEY, ".*").toRegex(RegexOption.IGNORE_CASE)
-        val ccNewIssue = props.getProperty(Constants.MAIL_FILTER_NEW_ISSUE_CC_ADDRESS_KEY, ".*").toRegex(RegexOption.IGNORE_CASE)
-        val subjectNewIssue = props.getProperty(Constants.MAIL_FILTER_NEW_ISSUE_SUBJECT_KEY, ".*").toRegex(RegexOption.IGNORE_CASE)
-        val bodyNewIssue = props.getProperty(Constants.MAIL_FILTER_NEW_ISSUE_BODY_KEY, ".*").toRegex(RegexOption.IGNORE_CASE)
+        val fromNewIssue = toRegex(props, Constants.MAIL_FILTER_NEW_ISSUE_FROM_ADDRESS_KEY)
+        val toNewIssue = toRegex(props, Constants.MAIL_FILTER_NEW_ISSUE_TO_ADDRESS_KEY)
+        val ccNewIssue = toRegex(props, Constants.MAIL_FILTER_NEW_ISSUE_CC_ADDRESS_KEY)
+        val subjectNewIssue = toRegex(props, Constants.MAIL_FILTER_NEW_ISSUE_SUBJECT_KEY)
+        val bodyNewIssue = toRegex(props, Constants.MAIL_FILTER_NEW_ISSUE_BODY_KEY)
         val newIssues = mails.filter(Mail.filterRegex(fromNewIssue, toNewIssue, ccNewIssue, subjectNewIssue, bodyNewIssue))
         println("New issues:- " + newIssues.size)
 
-        val fromNewResponse = props.getProperty(Constants.MAIL_FILTER_NEW_RESPONSE_FROM_ADDRESS_KEY, ".*").toRegex(RegexOption.IGNORE_CASE)
-        val toNewResponse = props.getProperty(Constants.MAIL_FILTER_NEW_RESPONSE_TO_ADDRESS_KEY, ".*").toRegex(RegexOption.IGNORE_CASE)
-        val ccNewResponse = props.getProperty(Constants.MAIL_FILTER_NEW_RESPONSE_CC_ADDRESS_KEY, ".*").toRegex(RegexOption.IGNORE_CASE)
-        val subjectNewResponse = props.getProperty(Constants.MAIL_FILTER_NEW_RESPONSE_SUBJECT_KEY, ".*").toRegex(RegexOption.IGNORE_CASE)
-        val bodyNewResponse = props.getProperty(Constants.MAIL_FILTER_NEW_RESPONSE_BODY_KEY, ".*").toRegex(RegexOption.IGNORE_CASE)
+        val fromNewResponse = toRegex(props, Constants.MAIL_FILTER_NEW_RESPONSE_FROM_ADDRESS_KEY)
+        val toNewResponse = toRegex(props, Constants.MAIL_FILTER_NEW_RESPONSE_TO_ADDRESS_KEY)
+        val ccNewResponse = toRegex(props, Constants.MAIL_FILTER_NEW_RESPONSE_CC_ADDRESS_KEY)
+        val subjectNewResponse = toRegex(props, Constants.MAIL_FILTER_NEW_RESPONSE_SUBJECT_KEY)
+        val bodyNewResponse = toRegex(props, Constants.MAIL_FILTER_NEW_RESPONSE_BODY_KEY)
         val newMessages = mails.filter(Mail.filterRegex(fromNewResponse, toNewResponse, ccNewResponse, subjectNewResponse, bodyNewResponse))
         println("New messages in existing issues:- " + newMessages.size)
         inbox?.close(false)
         store?.close()
         return newIssues.plus(newMessages)
+    }
+
+    private fun toRegex(props: Properties, filter: String): Regex {
+        return props.getProperty(filter, ".*").toRegex(RegexOption.IGNORE_CASE)
     }
 }

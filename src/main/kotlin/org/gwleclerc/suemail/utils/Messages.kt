@@ -22,16 +22,16 @@ object Messages {
     }
 
     fun getText(p: Part): String {
-        var text: String = ""
-        when {
-            p.isMimeType("text/plain") -> text = p.content.toString()
+        val text: String = when {
+            p.isMimeType("text/plain") -> p.content.toString()
             p.isMimeType("multipart/*") -> {
                 val mp: Multipart = p.content as Multipart
-                (0 until mp.count).forEach { i ->
+                (0 until mp.count).map { i ->
                     val bp = mp.getBodyPart(i)
-                    text += getText(bp)
-                }
+                    getText(bp)
+                }.joinToString()
             }
+            else -> ""
         }
         return text
     }
