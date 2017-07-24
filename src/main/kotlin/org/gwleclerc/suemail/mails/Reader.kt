@@ -69,6 +69,11 @@ object Reader {
                     sentDate = message.sentDate ?: Date()
             )
         }
+
+        println("Received emails:")
+        mails.forEach { mail -> println(mail.subject) }
+        println()
+
         val fromNewIssue = toRegex(props, Constants.MAIL_FILTER_NEW_ISSUE_FROM_ADDRESS_KEY)
         val toNewIssue = toRegex(props, Constants.MAIL_FILTER_NEW_ISSUE_TO_ADDRESS_KEY)
         val ccNewIssue = toRegex(props, Constants.MAIL_FILTER_NEW_ISSUE_CC_ADDRESS_KEY)
@@ -76,6 +81,8 @@ object Reader {
         val bodyNewIssue = toRegex(props, Constants.MAIL_FILTER_NEW_ISSUE_BODY_KEY)
         val newIssues = mails.filter(Mail.filterRegex(fromNewIssue, toNewIssue, ccNewIssue, subjectNewIssue, bodyNewIssue))
         println("New issues:- " + newIssues.size)
+        newIssues.forEach { mail -> println(mail.subject) }
+        println()
 
         val fromNewResponse = toRegex(props, Constants.MAIL_FILTER_NEW_RESPONSE_FROM_ADDRESS_KEY)
         val toNewResponse = toRegex(props, Constants.MAIL_FILTER_NEW_RESPONSE_TO_ADDRESS_KEY)
@@ -84,6 +91,9 @@ object Reader {
         val bodyNewResponse = toRegex(props, Constants.MAIL_FILTER_NEW_RESPONSE_BODY_KEY)
         val newMessages = mails.filter(Mail.filterRegex(fromNewResponse, toNewResponse, ccNewResponse, subjectNewResponse, bodyNewResponse))
         println("New messages in existing issues:- " + newMessages.size)
+        newMessages.forEach { mail -> println(mail.subject) }
+        println()
+
         inbox?.close(false)
         store?.close()
         return newIssues.plus(newMessages)
