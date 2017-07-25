@@ -10,7 +10,7 @@
 
 ### Autofix lint warnings
 
-`./gradlew ktlint`
+`./gradlew klintFormat`
 
 ## Build Jar
 
