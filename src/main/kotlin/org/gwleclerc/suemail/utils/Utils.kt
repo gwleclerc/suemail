@@ -1,16 +1,15 @@
 package org.gwleclerc.suemail.utils
 
 import com.beust.klaxon.JsonObject
-import com.beust.klaxon.json
 import org.gwleclerc.suemail.mails.Mail
-import java.util.*
+import java.util.Properties
 
 /**
  * Created by gwleclerc on 23/02/17.
  */
 object Utils {
 
-    fun search(mail: Mail, field:String, props: Properties): String {
+    fun search(mail: Mail, field: String, props: Properties): String {
         val valueKey = Constants.JIRA_SEARCH_FIELD_VALUE_KEY.format(field)
         val value = props.getProperty(valueKey)
         if (value != null) {
@@ -42,9 +41,9 @@ object Utils {
         val fields = props.getProperty(Constants.JIRA_ISSUE_FIELDS_KEY.format(mode), "")
                 .split(",")
                 .map(String::trim)
-                .filter{ field -> field != "" }
+                .filter { field -> field != "" }
         fields.forEach { field ->
-            val isAnOption =  props.getProperty(Constants.JIRA_ISSUE_OPTION_VALUES_KEY.format(mode, field), "") != ""
+            val isAnOption = props.getProperty(Constants.JIRA_ISSUE_OPTION_VALUES_KEY.format(mode, field), "") != ""
             if (isAnOption) {
                 createOption(field, mail, props, bodyFields, mode)
             } else {
@@ -76,9 +75,9 @@ object Utils {
         }
     }
 
-    private fun createOption(field: String, mail: Mail, props: Properties, fields: JsonObject, mode: String){
+    private fun createOption(field: String, mail: Mail, props: Properties, fields: JsonObject, mode: String) {
         val optionsKey = Constants.JIRA_ISSUE_OPTION_VALUES_KEY.format(mode, field)
-        val map: Map<String,String> = props.getProperty(optionsKey, "")
+        val map: Map<String, String> = props.getProperty(optionsKey, "")
                 .split(",")
                 .map(String::trim)
                 .filter { value -> value.split("=").size > 1 }

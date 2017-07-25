@@ -5,16 +5,15 @@ import org.gwleclerc.suemail.mails.Reader
 import org.gwleclerc.suemail.utils.Constants
 import java.io.File
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 import kotlin.system.exitProcess
-
 
 /**
  * Created by gwleclerc on 14/02/17.
  */
 
 fun main(args: Array<String>) {
-    if (args.size < 1) {
+    if (args.isEmpty()) {
         println("Usage:")
         println("   java -jar suemail.jar <property-file-path>")
         exitProcess(1)

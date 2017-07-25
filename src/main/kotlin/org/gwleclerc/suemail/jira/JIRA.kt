@@ -3,6 +3,7 @@ package org.gwleclerc.suemail.jira
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.beust.klaxon.obj
+import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.fuel.httpPut
@@ -14,33 +15,28 @@ import com.github.kittinunf.result.map
  */
 object JIRA {
 
-    fun find(url: String, jql : String, user: String, password: String): Result<JsonObject, Exception> {
-        val (request, response, result) = "$url/search?$jql".httpGet().authenticate(user, password).responseString()
-        return result.map { data ->
-            val parser = Parser()
-            val json = parser.parse(StringBuilder(data)) as? JsonObject ?: JsonObject()
-            json
-        }
+    fun find(url: String, jql: String, user: String, password: String): Result<JsonObject, Exception> {
+        return doGet("$url/search?$jql", user, password)
     }
 
     fun getTransition(url: String, issue: String, user: String, password: String): Result<JsonObject, Exception> {
-        val (request, response, result) = "$url/issue/$issue/transitions".httpGet().authenticate(user, password).responseString()
-        return result.map { data ->
-            val parser = Parser()
-            val json = parser.parse(StringBuilder(data)) as? JsonObject ?: JsonObject()
-            json
-        }
+        return doGet("$url/issue/$issue/transitions", user, password)
     }
 
-    fun doTransition(url: String, issue: String, transitionID: String,  user: String, password: String) {
+    /**
+     * Returns the JSON result of a GET call or an exception if the call failed
+     */
+    private fun doGet(url: String, user: String, password: String): Result<JsonObject, Exception> {
+        val (_, _, result) = url.httpGet().authenticate(user, password).responseString()
+        return result.map { data -> Parser().parse(StringBuilder(data)) as? JsonObject ?: JsonObject() }
+    }
+
+    fun doTransition(url: String, issue: String, transitionID: String, user: String, password: String): Result<String, Exception> {
         val body = JsonObject()
         val transition = JsonObject(mapOf("id" to transitionID))
         body["transition"] = transition
-        "$url/issue/$issue/transitions".httpPost()
-                .body(body.toJsonString())
-                .header("Content-Type" to "application/json")
-                .authenticate(user, password)
-                .responseString()
+
+        return doRequest("$url/issue/$issue/transitions".httpPost(), body, user, password)
     }
 
     fun createIssue(url: String, project: String, issue: JsonObject, user: String, password: String): Result<String, Exception> {
@@ -49,17 +45,20 @@ object JIRA {
         fields["issuetype"] = JsonObject(mapOf("name" to "Support"))
         issue["fields"] = fields
         println(issue.toJsonString(true))
-        val (request, response, result) = "$url/issue/".httpPost()
-                .body(issue.toJsonString())
-                .header("Content-Type" to "application/json")
-                .authenticate(user, password)
-                .responseString()
-        return result
+
+        return doRequest("$url/issue/".httpPost(), issue, user, password)
     }
 
     fun editIssue(url: String, key: String, issue: JsonObject, user: String, password: String): Result<String, Exception> {
-        val (request, response, result) = "$url/issue/$key".httpPut()
-                .body(issue.toJsonString())
+        return doRequest("$url/issue/$key".httpPut(), issue, user, password)
+    }
+
+    /**
+     * Calls a request with the given body and returns the result or an exception if the call failed
+     */
+    private fun doRequest(request: Request, body: JsonObject, user: String, password: String): Result<String, Exception> {
+        val (_, _, result) = request
+                .body(body.toJsonString())
                 .header("Content-Type" to "application/json")
                 .authenticate(user, password)
                 .responseString()
